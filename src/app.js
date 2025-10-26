@@ -1,21 +1,29 @@
-const express = require("express");
-const {authModule} = require("./auth");
-const app = express();
-//Order of routes are important...
-//it's like matching the route extactly begines with mentioned one.
-//request -> middleware chain -> request handler
-// request handler send response but middlewares does not. they can but generally they are worked like this. these are just normal functions, just lingos by developers.
+    const express = require("express");
+    const {authModule} = require("./auth");
+    const app = express();
+    const dbConnect = require("../database");
+    const User = require("./modals/user");
 
+    app.post("/user",(req,res)=>{
+        const user = new User({
+            firstname: "John",
+            email: "john@example.com"
+        });
+        try {
+            user.save();
+        res.send(user);
+        } catch (error) {
+            res.status(500).send(error);
+        }
+        
+    });
 
-app.get("/employee",(req,res,next)=>{
-    throw new Error('abcdef');
-    next();
-})
+    dbConnect().then(()=>{
+        console.log("Database connected");
+        app.listen(3000,()=>{console.log("Application is listening on port no 3000")});
+    }).catch((err)=>{
+        console.log(err);
+    });
 
-app.use("/",(err,req,res,next)=>{
-    if(err){
-        res.status(500).send("Something went wrong");
-    }
-})
-
-app.listen(3000,()=>{console.log("Application is listening on port no 3000")});
+    console.log("Database connection is pending");
+    

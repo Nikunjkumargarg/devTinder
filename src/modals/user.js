@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+//never trust your request.body.
 const userSchema = new mongoose.Schema({
     firstname: {
         type: String,

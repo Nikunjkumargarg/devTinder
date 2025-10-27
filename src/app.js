@@ -6,20 +6,19 @@
 
     app.use(express.json());
 
-    app.post("/user",(req,res)=>{
+    app.post("/user", async(req,res)=>{
         try {
             const user = new User(req.body);
-            user.save();
-        res.send(user);
+            await user.save();
+            res.send(user);
         } catch (error) {
-            res.status(500).send(error);
+            res.status(500).send("Error saving user: " +error.message);
         }
-        
     });
 
-    app.get("/user", async(req,res)=>{
+    app.get("/user/:emailId", async(req,res)=>{
         try {
-            const users = await User.find({emailId: req.body.emailId}); 
+            const users = await User.find({emailId: req.params.emailId}); 
             if(users.length === 0){
                 return res.status(404).send("User not found");
             } else {
@@ -39,9 +38,9 @@
         }
     });
 
-    app.delete("/user", async(req,res)=>{
+    app.delete("/user/:id", async(req,res)=>{
         try {
-            const users = await User.findByIdAndDelete(req.body.id);
+            const users = await User.findByIdAndDelete(req.params.id);
             res.send(users);
         } catch (error) {
             res.status(500).send("something went wrong", error.message);
@@ -50,9 +49,18 @@
 
     app.patch("/user", async(req,res)=>{
         try {
-            const users = await User.findByIdAndUpdate(req.body.userId, req.body, {returnDocument: "before"});
+            const allowedFields = ["password", "age", "gender", "photoUrl", "about", "skills"];
+            const isUpdateAllowed = Object.keys(req.body).every(field => allowedFields.includes(field));
+            if(!isUpdateAllowed){
+                throw new Error("Invalid fields");
+            }
+            if(req.body.skills.length > 10){
+                throw new Error("Skills must be less than 10");
+            }
+            const users = await User.findOneAndUpdate({emailId: req.body.emailId}, req.body, {returnDocument: "after", runValidators: true});
             res.send(users);
         } catch (error) {
+            console.log(error)
             res.status(500).send("something went wrong", error.message);
         }
     }); 

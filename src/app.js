@@ -34,10 +34,28 @@
         try {
             const users = await User.find({});
             res.send(users);
+        } catch (error) { 
+            res.status(500).send("something went wrong", error.message);
+        }
+    });
+
+    app.delete("/user", async(req,res)=>{
+        try {
+            const users = await User.findByIdAndDelete(req.body.id);
+            res.send(users);
         } catch (error) {
             res.status(500).send("something went wrong", error.message);
         }
     });
+
+    app.patch("/user", async(req,res)=>{
+        try {
+            const users = await User.findByIdAndUpdate(req.body.userId, req.body, {returnDocument: "before"});
+            res.send(users);
+        } catch (error) {
+            res.status(500).send("something went wrong", error.message);
+        }
+    }); 
 
     dbConnect().then(()=>{
         console.log("Database connected");

@@ -6,6 +6,8 @@
     const {validateSignUpData} = require("./utils/validation");
     const bcrypt = require("bcrypt");
     const jwt = require("jsonwebtoken");
+    //expiring token and cookie in 7 day is geeral.
+    // example - u visit cafe and login but forgot logout and token has no expiry.
     const userAuth = require("./middlewares/auth");
     const cookieParser = require("cookie-parser");
 

@@ -4,6 +4,7 @@
     const dbConnect = require("./config/database");
     const User = require("./modals/user");
     const {validateSignUpData} = require("./utils/validation");
+    const bcrypt = require("bcrypt")
 
     app.use(express.json());
 
@@ -11,12 +12,39 @@
 
         try {
             validateSignUpData(req);
-            const user = new User(req.body);
+            const {firstname, lastname, emailId, password} = req.body;
+            console.log(password);
+            const passwordHash = await bcrypt.hash(password, 10);
+            console.log(passwordHash);
+            req.body.password = passwordHash;
+            const user = new User({
+                firstname,
+                lastname,
+                emailId,
+                password: passwordHash
+            });
             await user.save();
             res.send(user);
         } catch (error) {
             res.status(500).send("Error saving user: " +error.message);
         }
+    });
+
+    app.post("/login", async(req,res)=>{
+       try {
+        const {emailId, password} = req.body;
+        const user = await User.findOne({emailId});
+        if(!user){
+            return res.status(404).send("User not found");
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if(!isPasswordValid){
+            return res.status(401).send("Invalid password");
+        }
+        res.send("Login successful");
+       } catch (error) {
+        res.status(500).send("something went wrong", error.message);
+       }
     });
 
     app.get("/user/:emailId", async(req,res)=>{

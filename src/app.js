@@ -1,13 +1,16 @@
     const express = require("express");
-    const {authModule} = require("./auth");
+    const {authModule} = require("./middlewares/auth");
     const app = express();
-    const dbConnect = require("../database");
+    const dbConnect = require("./config/database");
     const User = require("./modals/user");
+    const {validateSignUpData} = require("./utils/validation");
 
     app.use(express.json());
 
-    app.post("/user", async(req,res)=>{
+    app.post("/signup", async(req,res)=>{
+
         try {
+            validateSignUpData(req);
             const user = new User(req.body);
             await user.save();
             res.send(user);

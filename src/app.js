@@ -43,11 +43,13 @@
         if(!user){
             return res.status(404).send("Invalid Credentials");
         }
-        const isPasswordValid = user.comparePassword(password);
+        const isPasswordValid = await user.comparePassword(password);
+        console.log("isPasswordValid", isPasswordValid);
         if(!isPasswordValid){
             return res.status(401).send("Invalid Credentials");
         }
-        const token = user.generateAuthToken();
+        const token = await user.generateAuthToken();
+        console.log("token", token);
         res.cookie("token", token, {httpOnly: true, secure: true, maxAge: 3600000});
         res.send("Login successful ");
        } catch (error) {

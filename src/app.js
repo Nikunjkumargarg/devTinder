@@ -5,7 +5,6 @@
     const User = require("./modals/user");
     const {validateSignUpData} = require("./utils/validation");
     const bcrypt = require("bcrypt");
-    const jwt = require("jsonwebtoken");
     //expiring token and cookie in 7 day is geeral.
     // example - u visit cafe and login but forgot logout and token has no expiry.
     const userAuth = require("./middlewares/auth");
@@ -44,11 +43,11 @@
         if(!user){
             return res.status(404).send("Invalid Credentials");
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = user.comparePassword(password);
         if(!isPasswordValid){
             return res.status(401).send("Invalid Credentials");
         }
-        const token = jwt.sign({emailId: user.emailId, _id: user._id}, "secret", {expiresIn: "1h"});
+        const token = user.generateAuthToken();
         res.cookie("token", token, {httpOnly: true, secure: true, maxAge: 3600000});
         res.send("Login successful ");
        } catch (error) {

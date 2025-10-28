@@ -4,7 +4,9 @@
     const dbConnect = require("./config/database");
     const User = require("./modals/user");
     const {validateSignUpData} = require("./utils/validation");
-    const bcrypt = require("bcrypt")
+    const bcrypt = require("bcrypt");
+    const cookieParser = require("cookie-parser");
+    const jwt = require("jsonwebtoken");
 
     app.use(express.json());
 
@@ -41,6 +43,8 @@
         if(!isPasswordValid){
             return res.status(401).send("Invalid Credentials");
         }
+        const token = jwt.sign({emailId: user.emailId, _id: user._id}, "secret", {expiresIn: "1h"});
+        res.cookie("token", token, {httpOnly: true, secure: true, maxAge: 3600000});
         res.send("Login successful ");
        } catch (error) {
         res.status(500).send("something went wrong", error.message);

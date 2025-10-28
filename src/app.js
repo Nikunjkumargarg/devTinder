@@ -35,13 +35,13 @@
         const {emailId, password} = req.body;
         const user = await User.findOne({emailId});
         if(!user){
-            return res.status(404).send("User not found");
+            return res.status(404).send("Invalid Credentials");
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if(!isPasswordValid){
-            return res.status(401).send("Invalid password");
+            return res.status(401).send("Invalid Credentials");
         }
-        res.send("Login successful");
+        res.send("Login successful ");
        } catch (error) {
         res.status(500).send("something went wrong", error.message);
        }

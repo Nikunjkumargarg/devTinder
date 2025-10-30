@@ -19,4 +19,20 @@ const validateSignUpData = (req) => {
     }
 }
 
-module.exports = {validateSignUpData};
+const validateProfileEditData = (req) => {
+    const {about, skills, photourl, gender, age} = req.body;
+    if(about){validate.length(about, {min: 10, max: 1000});}
+    if(skills){validate.array(skills, {min: 1, max: 10});}
+    if(photourl){validate.isURL(photourl);}
+    if(gender){validate.isIn(gender, ["male", "female", "other"]);}
+    if(age){validate.isInt(age, {min: 18, max: 100});}
+}
+
+const validatePassword = (req) => {
+    const {password} = req.body;
+    if(!validator.isStrongPassword(password)){
+        throw new Error("Password must be strong");
+    }
+}
+
+module.exports = {validateSignUpData, validateProfileEditData, validatePassword};

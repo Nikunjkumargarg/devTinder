@@ -1,66 +1,36 @@
     const express = require("express");
-    const {authModule} = require("./middlewares/auth");
     const app = express();
     const dbConnect = require("./config/database");
-    const User = require("./modals/user");
-    const {validateSignUpData} = require("./utils/validation");
-    const bcrypt = require("bcrypt");
     //expiring token and cookie in 7 day is geeral.
     // example - u visit cafe and login but forgot logout and token has no expiry.
-    const userAuth = require("./middlewares/auth");
     const cookieParser = require("cookie-parser");
-
 
     app.use(express.json());
     app.use(cookieParser());
 
-    app.post("/signup", async(req,res)=>{
+    const authRouter = require("./routes/auth");
+    const profileRouter = require("./routes/profile");
+    const requestsRouter = require("./routes/requests");
 
-        try {
-            validateSignUpData(req);
-            const {firstname, lastname, emailId, password} = req.body;
-            console.log(password);
-            const passwordHash = await bcrypt.hash(password, 10);
-            console.log(passwordHash);
-            req.body.password = passwordHash;
-            const user = new User({
-                firstname,
-                lastname,
-                emailId,
-                password: passwordHash
-            });
-            await user.save();
-            res.send(user);
-        } catch (error) {
-            res.status(500).send("Error saving user: " +error.message);
-        }
+    // Health check route
+    app.get("/health", (req, res) => {
+        res.send({ status: "OK", message: "Server is running" });
     });
 
-    app.post("/login", async(req,res)=>{
-       try {
-        const {emailId, password} = req.body;
-        const user = await User.findOne({emailId});
-        if(!user){
-            return res.status(404).send("Invalid Credentials");
-        }
-        const isPasswordValid = await user.comparePassword(password);
-        console.log("isPasswordValid", isPasswordValid);
-        if(!isPasswordValid){
-            return res.status(401).send("Invalid Credentials");
-        }
-        const token = await user.generateAuthToken();
-        console.log("token", token);
-        res.cookie("token", token, {httpOnly: true, secure: true, maxAge: 3600000});
-        res.send("Login successful ");
-       } catch (error) {
-        res.status(500).send("something went wrong", error.message);
-       }
+    app.use("/", authRouter);
+    app.use("/", profileRouter);
+    app.use("/", requestsRouter);
+
+    // Catch-all route for undefined endpoints
+    app.use((req, res) => {
+        res.status(404).send("Route not found");
     });
 
-    app.get("/profile", userAuth, async(req,res)=>{
-       res.send(req.user);
+    // Global error handler
+    app.use((err, req, res, next) => {
+        console.error("Error:", err);
+        res.status(500).send({ error: err.message || "Internal server error" });
     });
-
 
     dbConnect().then(()=>{
         console.log("Database connected");

@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
     firstname: {
         type: String,
+        index: true,
         required: true,
         minlength: 3,
         maxlength: 50
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         required: true,
-        unique: true,
+        unique: true, //mongodb create index on the emailId field automatically because of unique true.
         validate(value){
             if(!validator.isEmail(value)){
                 throw new Error("Invalid email");

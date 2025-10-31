@@ -4,7 +4,7 @@ const User = require('../modals/user');
 const bcrypt = require('bcrypt');
 const {validateSignUpData} = require('../utils/validation');
 const jwt = require('jsonwebtoken');
-
+const userAuth = require('../middlewares/auth');
 
 authRouter.post("/signup", async(req,res)=>{       
     try {

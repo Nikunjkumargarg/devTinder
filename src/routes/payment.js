@@ -77,6 +77,6 @@ try{
   return res.status(200).send({ message: 'User is not premium', isPremium: false });
 } catch (err) {
   res.status(400).send({ error: err.message || 'Internal server error' });
+}
 });
-
 module.exports = paymentRouter;

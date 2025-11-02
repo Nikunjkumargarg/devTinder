@@ -11,6 +11,8 @@ app.use(cookieParser());
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestsRouter = require('./routes/requests');
+const userRouter = require('./routes/user');
+const paymentRouter = require('./routes/payment');
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -21,6 +23,7 @@ app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestsRouter);
 app.use('/', userRouter);
+app.use('/', paymentRouter);
 
 // Catch-all route for undefined endpoints
 app.use((req, res) => {

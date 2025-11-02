@@ -29,12 +29,12 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
     .populate('toUserId', ['firstname', 'lastname', 'age', 'skills', 'about']);
 
     const data = connections.map((row) => {
-        if(connections.fromUserId._id === loggedInUser._id){
+        if(connections.fromUserId._id.toString() === loggedInUser._id.toString()){
             return connections.toUserId;
         }
         else{
             return connections.fromUserId;
-        }
+        } 
     });
     res.json({ message: 'Data fetched successfully', data });
   } catch (error) {

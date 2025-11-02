@@ -43,20 +43,18 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
       return res.status(400).send({ error: 'Invalid signature' });
     }
 
-    //if payment is valid, update the payment status.
-    //update the user as premium.
-    //return success response to razorpay
-
     const paymentDetails = req.body.payload.payment.entity;
 
     const payment = await Payment.findOne({orderid: paymentDetails.order_id});
     payment.status = paymentDetails.status;
     await payment.save();
+    console.log("payment saved");
 
     const user = await User.findOne({_id: payment.userid});
     user.membershipType = payment.notes.membership;
     user.isPremium = true;
     await user.save();
+    console.log("user updated");
 
     // if(req.body.event === "payment.captured"){
       
@@ -68,6 +66,17 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
   catch (err) {
     res.status(400).send({ error: err.message || 'Internal server error' });
   }
+});
+
+paymentRouter.get('/premium/verify', userAuth, async (req, res) => {
+try{
+  const user = req.user;
+  if(user.isPremium){
+    return res.status(200).send({ message: 'User is already premium', isPremium: true });
+  }
+  return res.status(200).send({ message: 'User is not premium', isPremium: false });
+} catch (err) {
+  res.status(400).send({ error: err.message || 'Internal server error' });
 });
 
 module.exports = paymentRouter;

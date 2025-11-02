@@ -4,6 +4,14 @@ const dbConnect = require('./config/database');
 //expiring token and cookie in 7 day is geeral.
 // example - u visit cafe and login but forgot logout and token has no expiry.
 const cookieParser = require('cookie-parser');
+const http = require('http');
+const initializeSocket = require('./utils/socket');
+
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}))
 
 app.use(express.json());
 app.use(cookieParser());
@@ -36,10 +44,13 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: err.message || 'Internal server error' });
 });
 
+const server = http.createServer(app);
+initializeSocket(server);
+
 dbConnect()
   .then(() => {
     console.log('Database connected');
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log('Application is listening on port no 3000');
     });
   })

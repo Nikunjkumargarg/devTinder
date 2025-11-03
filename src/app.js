@@ -1,17 +1,17 @@
 const express = require('express');
-const app = express();
 const dbConnect = require('./config/database');
-//expiring token and cookie in 7 day is geeral.
-// example - u visit cafe and login but forgot logout and token has no expiry.
 const cookieParser = require('cookie-parser');
 const http = require('http');
 const initializeSocket = require('./utils/socket');
+const cors = require('cors');
+const app = express();
 
-
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}))
+app.use(cors(
+  {
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }
+))
 
 app.use(express.json());
 app.use(cookieParser());
@@ -20,7 +20,7 @@ const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestsRouter = require('./routes/requests');
 const userRouter = require('./routes/user');
-const paymentRouter = require('./routes/payment');
+// const paymentRouter = require('./routes/payment');
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -31,7 +31,7 @@ app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestsRouter);
 app.use('/', userRouter);
-app.use('/', paymentRouter);
+// app.use('/', paymentRouter);
 
 // Catch-all route for undefined endpoints
 app.use((req, res) => {
@@ -50,8 +50,8 @@ initializeSocket(server);
 dbConnect()
   .then(() => {
     console.log('Database connected');
-    server.listen(3000, () => {
-      console.log('Application is listening on port no 3000');
+    server.listen(7777, () => {
+      console.log('Application is listening on port no 7777');
     });
   })
   .catch((err) => {

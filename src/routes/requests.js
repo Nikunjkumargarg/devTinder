@@ -50,7 +50,7 @@ requestsRouter.post('/request/review/:status/:requestId', userAuth, async (req, 
       return res.status(400).json({ message: 'Status not allowed!' });
     }
 
-    const connectionRequest = await ConnectionRequest.findById({
+    const connectionRequest = await ConnectionRequest.findOne({
       _id: requestId,
       toUserId: loggedInUser._id,
       status: 'interested',
@@ -64,7 +64,7 @@ requestsRouter.post('/request/review/:status/:requestId', userAuth, async (req, 
 
     const data = await connectionRequest.save();
 
-    res.json({ message: 'Connection request not found' });
+    res.json({ message: 'Connection request updated successfully', data });
   } catch (error) {
     res.status(500).send({ error: error.message || 'Internal server error' });
   }

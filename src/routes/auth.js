@@ -43,7 +43,7 @@ authRouter.post('/login', async (req, res) => {
     const token = await user.generateAuthToken();
     console.log('token', token);
     res.cookie('token', token, { httpOnly: true, secure: false, maxAge: 3600000 });
-    res.send('Login successful ');
+    res.send(user);
   } catch (error) {
     res.status(500).send('something went wrong', error.message);
   }

@@ -4,6 +4,7 @@ const userAuth = require('../middlewares/auth');
 const User = require('../modals/user');
 const { validateProfileEditData, validatePassword } = require('../utils/validation');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 profileRouter.get('/profile/view', userAuth, async (req, res) => {
   try {
@@ -36,7 +37,7 @@ profileRouter.patch('/profile/password', userAuth, async (req, res) => {
   try {
     validatePassword(req);
     const { password } = req.body;
-    const isPasswordValid = bcrypt.compare(password, req.user.password);
+    const isPasswordValid = await bcrypt.compare(password, req.user.password);
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }

@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const userAuth = require('../middlewares/auth');
 const User = require('../modals/user');
+const ConnectionRequest = require('../modals/connectionRequest');
 const { connection } = require('mongoose');
 
 userRouter.get('/user/requests/received', userAuth, async (req, res) => {
@@ -29,11 +30,11 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
     .populate('toUserId', ['firstname', 'lastname', 'age', 'skills', 'about']);
 
     const data = connections.map((row) => {
-        if(connections.fromUserId._id.toString() === loggedInUser._id.toString()){
-            return connections.toUserId;
+        if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
+            return row.toUserId;
         }
         else{
-            return connections.fromUserId;
+            return row.fromUserId;
         } 
     });
     res.json({ message: 'Data fetched successfully', data });
@@ -41,3 +42,5 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
     res.status(400).send({ error: error.message || 'Internal server error' });
   }
 });
+
+module.exports = userRouter;

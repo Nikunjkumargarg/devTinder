@@ -49,8 +49,9 @@ authRouter.post('/login', async (req, res) => {
   }
 });
 
-authRouter.post('/logout', userAuth, async (req, res) => {
-  res.cookie('token', '', { httpOnly: true, secure: false, maxAge: 0 });
+authRouter.post('/logout', async (req, res) => {
+  console.log("hitting")
+  res.clearCookie('token', { httpOnly: true, secure: false, path: '/' });
   res.send('Logout successful');
 });
 

@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     photoUrl: {
       type: String,
       default:
-        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Fprofile-placeholder&psig=AOvVaw1IbDqNG_1f8OgHHHa7FTSx&ust=1761644051736000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCJjmw9KJxJADFQAAAAAdAAAAABAE',
+        'https://cdn-icons-png.freepik.com/512/219/219988.png',
       validate(value) {
         if (!validator.isURL(value)) {
           throw new Error('Invalid photo URL');

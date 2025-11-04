@@ -43,4 +43,31 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
   }
 });
 
-module.exports = userRouter;
+userRouter.get('/user/feed', userAuth, async (req, res) => {
+  try { 
+    const loggedInUser = req.user;
+    //find connection requests that user have sent or received.
+    const connectionRequests = await ConnectionRequest.find({
+      $or: [
+        { fromUserId: loggedInUser._id },
+        { toUserId: loggedInUser._id },
+      ],
+    }).select("fromUserId toUserId"); 
+
+    const hideUsersFromFeed = new Set();
+    connectionRequests.forEach(request => {
+      hideUsersFromFeed.add(request.fromUserId.toString());
+      hideUsersFromFeed.add(request.toUserId.toString());
+    });
+    hideUsersFromFeed.add(loggedInUser._id.toString());
+
+    const users = await User.find({ 
+      _id: { $nin: Array.from(hideUsersFromFeed) }
+    }).select("firstname lastname age skills about photoUrl");
+    res.send(users);
+  } catch (error) {
+    res.status(400).send({ error: error.message || 'Internal server error' });
+    }
+  });
+  
+  module.exports = userRouter;

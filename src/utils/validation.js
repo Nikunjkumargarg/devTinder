@@ -18,19 +18,19 @@ const validateSignUpData = (req) => {
 const validateProfileEditData = (req) => {
   const { about, skills, photourl, gender, age } = req.body;
   if (about) {
-    validate.length(about, { min: 10, max: 1000 });
+    validator.isLength(about, { min: 10, max: 1000 });
   }
   if (skills) {
-    validate.array(skills, { min: 1, max: 10 });
+    validator.array(skills, { min: 1, max: 10 });
   }
   if (photourl) {
-    validate.isURL(photourl);
+    validator.isURL(photourl);
   }
   if (gender) {
-    validate.isIn(gender, ['male', 'female', 'other']);
+    validator.isIn(gender, ['male', 'female', 'other', 'Male', 'Female', 'Other']);
   }
   if (age) {
-    validate.isInt(age, { min: 18, max: 100 });
+    validator.isInt(age, { min: 18, max: 100 });
   }
 };
 

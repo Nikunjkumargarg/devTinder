@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       //validate function runs only when we create new document...
       validate(value) {
-        if (!['male', 'female', 'other'].includes(value)) {
+        if (!['male', 'female', 'other', 'Male', 'Female', 'Other'].includes(value)) {
           throw new Error('Gender must be either male, female or other');
         }
       },

@@ -18,16 +18,18 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
   try {
     validateProfileEditData(req);
 
-    const { about, skills, photourl, gender, age } = req.body;
+    const { about, skills, photoUrl, gender, age } = req.body;
+    console.log(req.body)
 
     if (about !== undefined) req.user.about = about;
     if (skills !== undefined) req.user.skills = skills;
-    if (photourl !== undefined) req.user.photourl = photourl;
+    if (photoUrl !== undefined) req.user.photoUrl = photoUrl;
     if (gender !== undefined) req.user.gender = gender;
     if (age !== undefined) req.user.age = age;
 
+    console.log(req.user)
     await req.user.save();
-    res.send(req.user);
+    res.json({message: 'Profile updated successfully', data: req.user});
   } catch (error) {
     res.status(500).send({ error: error.message || 'Internal server error' });
   }

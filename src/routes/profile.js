@@ -18,14 +18,15 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
   try {
     validateProfileEditData(req);
 
-    const { about, skills, photoUrl, gender, age } = req.body;
+    const {firstname, lastname, about, photoUrl, gender, age } = req.body;
     console.log(req.body)
 
     if (about !== undefined) req.user.about = about;
-    if (skills !== undefined) req.user.skills = skills;
     if (photoUrl !== undefined) req.user.photoUrl = photoUrl;
     if (gender !== undefined) req.user.gender = gender;
     if (age !== undefined) req.user.age = age;
+    if (firstname !== undefined) req.user.firstname = firstname;
+    if (lastname !== undefined) req.user.lastname = lastname;
 
     console.log(req.user)
     await req.user.save();

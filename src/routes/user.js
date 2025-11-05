@@ -45,7 +45,11 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
 
 userRouter.get('/user/feed', userAuth, async (req, res) => {
   try { 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
     const loggedInUser = req.user;
+    const skip = (page - 1) * limit;
     //find connection requests that user have sent or received.
     const connectionRequests = await ConnectionRequest.find({
       $or: [
@@ -63,7 +67,7 @@ userRouter.get('/user/feed', userAuth, async (req, res) => {
 
     const users = await User.find({ 
       _id: { $nin: Array.from(hideUsersFromFeed) }
-    }).select("firstname lastname age skills about photoUrl");
+    }).skip(skip).limit(limit).sort({ createdAt: -1 });
     res.send(users);
   } catch (error) {
     res.status(400).send({ error: error.message || 'Internal server error' });

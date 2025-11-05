@@ -26,8 +26,8 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
         { fromUserId: loggedInUser._id, status: 'accepted' },
         { toUserId: loggedInUser._id, status: 'accepted' },
       ],
-    }).populate('fromUserId', ['firstname', 'lastname', 'age', 'skills', 'about'])
-    .populate('toUserId', ['firstname', 'lastname', 'age', 'skills', 'about']);
+    }).populate('fromUserId', ['firstname', 'lastname', 'age', 'skills', 'about', 'photoUrl', 'gender'])
+    .populate('toUserId', ['firstname', 'lastname', 'age', 'skills', 'about', 'photoUrl', 'gender']);
 
     const data = connections.map((row) => {
         if(row.fromUserId._id.toString() === loggedInUser._id.toString()){

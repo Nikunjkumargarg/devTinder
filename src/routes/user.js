@@ -70,7 +70,7 @@ userRouter.get('/user/feed', userAuth, async (req, res) => {
     const users = await User.find({ 
       _id: { $nin: Array.from(hideUsersFromFeed) }
     }).skip(skip).limit(limit).sort({ createdAt: -1 });
-    res.send(users);
+    res.json({message: 'Data fetched successfully', data: users, total: users.length, page, limit});
   } catch (error) {
     res.status(400).send({ error: error.message || 'Internal server error' });
     }

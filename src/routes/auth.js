@@ -22,6 +22,8 @@ authRouter.post('/signup', async (req, res) => {
       password: passwordHash,
     });
     await user.save();
+    const token = await user.generateAuthToken();
+    res.cookie('token', token, { httpOnly: true, secure: false, maxAge: 24 * 60 * 60 * 1000 });
     res.send(user);
   } catch (error) {
     res.status(500).send('Error saving user: ' + error.message);

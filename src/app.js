@@ -1,10 +1,12 @@
 const express = require('express');
+require('dotenv').config();
 const dbConnect = require('./config/database');
 const cookieParser = require('cookie-parser');
 const http = require('http');
 const initializeSocket = require('./utils/socket');
 const cors = require('cors');
 const app = express();
+
 
 app.use(cors(
   {
@@ -50,8 +52,8 @@ initializeSocket(server);
 dbConnect()
   .then(() => {
     console.log('Database connected');
-    server.listen(7777, () => {
-      console.log('Application is listening on port no 7777');
+    server.listen(process.env.PORT, () => {
+      console.log(`Application is listening on port no ${process.env.PORT}`);
     });
   })
   .catch((err) => {

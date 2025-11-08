@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const http = require('http');
 const initializeSocket = require('./utils/socket');
 const cors = require('cors');
+require('./utils/cronJob');
 const app = express();
 
 
